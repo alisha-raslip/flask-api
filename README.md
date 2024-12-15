@@ -1,59 +1,161 @@
-# Flask REST API
+# Flask REST API Project
 
-## Project Overview
+## Overview
 
-This project implements a REST API using Flask to handle and process text data. It includes endpoints to perform operations such as processing text input (e.g., converting text to uppercase). The application demonstrates foundational API concepts such as request handling, input validation, JSON processing, and structured responses.
+This Flask-based REST API project demonstrates foundational API development concepts, including JSON processing, input validation, and structured responses. It features multiple endpoints to process and validate data, as well as perform health checks. The API is designed for easy testing using tools like Hoppscotch or Postman.
 
 ---
 
 ## Endpoints
 
-### 1. **POST `/api/text`**
-Processes the provided text input.
+### 1. **POST `/api/text`**  
+Processes a text input provided in the JSON body.
 
-#### **Request**
-- **Headers:**
-  - `Content-Type: application/json`
-- **Body:**
-  ```json
-  {
-      "text": "Hello, Flask!"
-  }
-  ```
+- **Request**
+  - **Headers:** `Content-Type: application/json`
+  - **Body:**
+    ```json
+    {
+        "text": "Hello, Flask!"
+    }
+    ```
 
-#### **Response**
-- **Status Code:** `200 OK`
-- **Body:**
-  ```json
-  {
-      "original_text": "Hello, Flask!",
-      "processed_text": "HELLO, FLASK!"
-  }
-  ```
-
-#### **Error Responses**
-- **Invalid Content Type:**
-  ```json
-  {
-      "error": "Invalid content type. JSON required"
-  }
-  ```
-- **Missing or Empty `text`:**
-  ```json
-  {
-      "error": "'text' must be a non-empty string"
-  }
-  ```
+- **Response**
+  - **Success (200):**
+    ```json
+    {
+        "original_text": "Hello, Flask!",
+        "processed_text": "HELLO, FLASK!"
+    }
+    ```
+  - **Error (400):**
+    ```json
+    {
+        "error": "Missing 'text' in request payload"
+    }
+    ```
 
 ---
 
-## Setup and Installation
+### 2. **GET `/api/test`**  
+Returns a basic "Hello World" message.
 
-### **Prerequisites**
-1. Python 3.8 or higher installed.
-2. A virtual environment (optional but recommended).
+- **Request**
+  - No parameters or headers required.
 
-### **Installation Steps**
+- **Response**
+  - **Success (200):**
+    ```json
+    {
+        "message": "Hello, World!"
+    }
+    ```
+
+---
+
+### 3. **POST `/api/validate`**  
+Validates the structure of the provided JSON input.
+
+- **Request**
+  - **Headers:** `Content-Type: application/json`
+  - **Body:**
+    ```json
+    {
+        "key": "value"
+    }
+    ```
+
+- **Response**
+  - **Success (200):**
+    ```json
+    {
+        "message": "JSON is valid"
+    }
+    ```
+  - **Error (400):**
+    ```json
+    {
+        "error": "Invalid JSON format"
+    }
+    ```
+
+---
+
+### 4. **GET `/api/health`**  
+Performs a health check for the server.
+
+- **Request**
+  - No parameters or headers required.
+
+- **Response**
+  - **Success (200):**
+    ```json
+    {
+        "status": "healthy"
+    }
+    ```
+
+---
+
+## Testing the API with Hoppscotch
+
+### Setup Instructions
+1. Open [Hoppscotch](https://hoppscotch.io/) in your browser.
+2. For each endpoint, configure the method (GET or POST), URL, headers, and body as described below.
+
+---
+
+### **Testing `/api/text`**
+1. Set the method to `POST`.
+2. URL: `http://127.0.0.1:5000/api/text`
+3. Add the header:
+   - `Content-Type: application/json`
+4. Add the body:
+   ```json
+   {
+       "text": "Hello, Flask!"
+   }
+   ```
+5. Click **Send** and check the response.
+
+---
+
+### **Testing `/api/test`**
+1. Set the method to `GET`.
+2. URL: `http://127.0.0.1:5000/api/test`
+3. Click **Send** and check the response.
+
+---
+
+### **Testing `/api/validate`**
+1. Set the method to `POST`.
+2. URL: `http://127.0.0.1:5000/api/validate`
+3. Add the header:
+   - `Content-Type: application/json`
+4. Add the body:
+   ```json
+   {
+       "key": "value"
+   }
+   ```
+5. Click **Send** and check the response.
+
+---
+
+### **Testing `/api/health`**
+1. Set the method to `GET`.
+2. URL: `http://127.0.0.1:5000/api/health`
+3. Click **Send** and check the response.
+
+---
+
+## Project Setup
+
+### Prerequisites
+- Python 3.8 or higher.
+- Virtual environment (optional but recommended).
+
+### Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/flask-api.git
@@ -68,29 +170,21 @@ Processes the provided text input.
    ```bash
    pip install -r requirements.txt
    ```
-
-4. Run the server:
+4. Run the Flask server:
    ```bash
    flask run
    ```
 
-### **Testing the Server**
-1. Use Postman, Hoppscotch, or `curl` to test the API.
-2. Example request:
-   ```bash
-   curl -X POST http://127.0.0.1:5000/api/text -H "Content-Type: application/json" -d '{"text": "Hello"}'
-   ```
-
 ---
 
-## Project Structure
+## Folder Structure
 
 ```
 flask-api/
 ├── app/
 │   ├── __init__.py      # Flask app factory
 │   ├── routes.py        # API endpoints
-│   └── utils.py         # Utility functions (if any)
+│   └── utils.py         # Utility functions
 ├── tests/
 │   └── test_endpoints.py # Automated tests
 ├── run.py               # Application entry point
@@ -101,39 +195,13 @@ flask-api/
 
 ---
 
-## Testing the API
+## Automated Testing
 
-### **Using Postman or Hoppscotch**
-1. Set the method to `POST`.
-2. URL: `http://127.0.0.1:5000/api/text`
-3. Add the `Content-Type: application/json` header.
-4. Provide the JSON body:
-   ```json
-   {
-       "text": "Sample text"
-   }
-   ```
-
-### **Using Curl**
+### Run Tests
+To run automated tests:
 ```bash
-curl -X POST http://127.0.0.1:5000/api/text -H "Content-Type: application/json" -d '{"text": "Sample text"}'
+pytest tests/test_endpoints.py
 ```
-
----
-
-## Implementation Details
-
-1. **Input Validation:** Ensures valid JSON and presence of `text` in the request body.
-2. **Error Handling:** Responds with meaningful error messages for invalid requests.
-3. **Response Formatting:** Provides consistent JSON responses with appropriate status codes.
-
----
-
-## Future Enhancements
-
-- Add more endpoints for text manipulation (e.g., reversing, translating).
-- Integrate third-party APIs for advanced text processing.
-- Implement database storage for text logs.
 
 ---
 
@@ -151,4 +219,3 @@ curl -X POST http://127.0.0.1:5000/api/text -H "Content-Type: application/json" 
 This project is licensed under the MIT License.
 
 ---
-
