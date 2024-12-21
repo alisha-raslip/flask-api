@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project demonstrates the development of a foundational REST API using Flask. The API handles JSON-based requests and performs validation, input parsing, and basic processing. It includes multiple endpoints such as health checks, simple "Hello World" responses, and a validation endpoint to verify the structure of JSON input.
+This project demonstrates the development of a foundational REST API using Flask. The API handles JSON-based requests and performs validation, input parsing, and basic processing. It includes multiple endpoints such as health checks, simple "Hello World" responses, a validation endpoint to verify the structure of JSON input, and a versatile content-type handler endpoint.
 
 This is part of a broader project to create a sign language interpreter backend.
 
@@ -10,99 +10,175 @@ This is part of a broader project to create a sign language interpreter backend.
 
 ## Endpoints
 
-### **GET `/api/health`**  
+### 1. **GET /api/health**
 Checks the health of the server.
 
-- **Request**  
-  - No parameters required.
+**Request**  
+No parameters required.  
 
-- **Response**
-  - **Success (200):**
-    ```json
-    {
-        "status": "healthy"
-    }
-    ```
-
----
-
-### **GET `/api/test`**  
-Returns a simple "Hello, World!" message.
-
-- **Request**  
-  - No parameters required.
-
-- **Response**
-  - **Success (200):**
-    ```json
-    {
-        "message": "Hello, World!"
-    }
-    ```
+**Response**  
+**Success (200):**
+```json
+{
+    "status": "healthy"
+}
+```
 
 ---
 
-### **POST `/api/text`**  
-Accepts a JSON input containing a `text` field and echoes the text back in the response, along with a confirmation message.
+### 2. **GET /api/test**  
+Returns a simple "Hello, World!" message.  
 
-- **Request**  
-  - **Headers:** `Content-Type: application/json`  
-  - **Body:**
-    ```json
-    {
+**Request**  
+No parameters required.  
+
+**Response**  
+**Success (200):**
+```json
+{
+    "message": "Hello, World!"
+}
+```
+
+---
+
+### 3. **POST /api/text**  
+Accepts a JSON input containing a text field and echoes the text back in the response, along with a confirmation message.  
+
+**Request**  
+**Headers:**  
+`Content-Type: application/json`  
+**Body:**
+```json
+{
+    "text": "Hello, Flask!"
+}
+```
+
+**Response**  
+**Success (200):**
+```json
+{
+    "data": {
         "text": "Hello, Flask!"
-    }
-    ```
+    },
+    "message": "Received your text!"
+}
+```
 
-- **Response**
-  - **Success (200):**
-    ```json
-    {
-        "data": {
-            "text": "Hello, Flask!"
-        },
-        "message": "Received your text!"
-    }
-    ```
-  - **Error (400):**
-    ```json
-    {
-        "error": "Missing 'text' in request body"
-    }
-    ```
+**Error (400):**
+```json
+{
+    "error": "Missing 'text' in request body"
+}
+```
 
 ---
 
-### **POST `/api/validate`**  
+### 4. **POST /api/validate**  
 Validates the structure of the provided JSON input and echoes the data back if it is valid.
 
-- **Request**  
-  - **Headers:** `Content-Type: application/json`  
-  - **Body:**
-    ```json
-    {
+**Request**  
+**Headers:**  
+`Content-Type: application/json`  
+**Body:**
+```json
+{
+    "name": "Alice",
+    "age": 25
+}
+```
+
+**Response**  
+**Success (200):**
+```json
+{
+    "data": {
         "name": "Alice",
         "age": 25
-    }
-    ```
+    },
+    "message": "Valid data"
+}
+```
 
-- **Response**
-  - **Success (200):**
-    ```json
-    {
-        "data": {
-            "name": "Alice",
-            "age": 25
-        },
-        "message": "Valid data"
+**Error (400):**
+```json
+{
+    "error": "Invalid JSON format"
+}
+```
+
+**Error (500):**
+```json
+{
+    "error": "An error occurred",
+    "details": "Detailed error message here"
+}
+```
+
+---
+
+### 5. **POST /api/content**  
+Handles different content types in requests and processes them accordingly.
+
+**Request**  
+**Headers:**  
+The `Content-Type` header should specify one of the following:  
+- `application/json`
+- `application/x-www-form-urlencoded`
+
+**Examples:**  
+1. **For JSON Content-Type:**  
+**Headers:**
+`Content-Type: application/json`  
+**Body:**
+```json
+{
+    "key": "value"
+}
+```
+**Response (200):**
+```json
+{
+    "message": "JSON received",
+    "data": {
+        "key": "value"
     }
-    ```
-  - **Error (400):**
-    ```json
-    {
-        "error": "Invalid JSON format"
+}
+```
+
+2. **For Form Data Content-Type:**  
+**Headers:**
+`Content-Type: application/x-www-form-urlencoded`  
+**Body:**
+```
+key=value
+```
+**Response (200):**
+```json
+{
+    "message": "Form data received",
+    "data": {
+        "key": "value"
     }
-    ```
+}
+```
+
+3. **Unsupported Content-Type:**  
+**Response (415):**
+```json
+{
+    "error": "Unsupported content type: text/plain"
+}
+```
+
+**Error (500):**
+```json
+{
+    "error": "An error occurred",
+    "details": "Detailed error message here"
+}
+```
 
 ---
 
@@ -136,15 +212,15 @@ Validates the structure of the provided JSON input and echoes the data back if i
 
 ## Testing
 
-### Using Hoppscotch
-1. Open [Hoppscotch](https://hoppscotch.io/).
-2. For each endpoint, configure the method (GET or POST), URL, headers, and body as described above.
-3. Send the request and observe the response.
+### Using Hoppscotch or Postman
+- Configure each endpoint with the method (GET or POST), URL, headers, and body as described above.
+- Send requests and observe responses.
 
-### Using Postman
-1. Import the `postman/collection.json` into Postman.
-2. Set up the environment to point to `http://127.0.0.1:5000`.
-3. Run requests for each endpoint and validate responses.
+### Automated Testing
+Run tests using `pytest`:
+```bash
+pytest tests/test_endpoints.py
+```
 
 ---
 
@@ -176,32 +252,18 @@ flask-api/
 - Used Flask's built-in error handlers for better maintainability.
 
 ### Error Handling
-- Handled 400 (Bad Request), 404 (Not Found), and 500 (Internal Server Error).
+- 400 (Bad Request), 404 (Not Found), and 500 (Internal Server Error) handled gracefully.
 - Custom error messages for invalid inputs or missing data.
 
 ### Validation Rules
-- Ensured `POST /api/text` requires a JSON payload with a `text` key.
-- Validated all JSON inputs using Flask's request context.
-
----
-
-## Automated Tests
-
-### Running Tests
-To run tests using `pytest`:
-```bash
-pytest tests/test_endpoints.py
-```
-
-### Test Cases
-- Success scenarios for all endpoints.
-- Validation of input formats and error scenarios.
-- Response format and status code checks.
+- Ensured all JSON payloads are validated before processing.
+- Supported multiple content types in `/api/content`.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License.  
 
----
+--- 
+
