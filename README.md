@@ -205,5 +205,3 @@ pytest tests/test_endpoints.py
 This project is licensed under the MIT License.
 
 ---
-
-This updated **README.md** reflects the features demonstrated in the provided screenshot for `/api/validate` and includes setup, testing, and endpoint descriptions. Adjust paths and URLs as needed for your specific project.
